@@ -12,16 +12,11 @@ class Router {
         $this->method = $_POST['_method'] ?? $_SERVER["REQUEST_METHOD"];
     }
 
-    // Регистрация маршрута
-    public function register($url, $controllerName, $actionName = 'index') {
-        $this->routes[$url] = ['controller' => $controllerName, 'action' => $actionName];
-    }
-
-    public function init() {
+    public function init(): void {
         $this->route();
     }
 
-    public function route() {
+    private function route(): void {
         $matches = false;
 
         foreach ($this->routes as $route) {
@@ -61,7 +56,7 @@ class Router {
         }
     }
 
-    public function add($uri, $controller, $method) {
+    public function add($uri, $controller, $method): void {
         $this->routes[] = [
             'uri' => $uri,
             'controller' => $controller,
@@ -69,15 +64,15 @@ class Router {
         ];
     }
 
-    public function get($uri, $controller) {
+    public function get($uri, $controller): void {
         $this->add($uri, $controller, 'GET');
     }
 
-    public function post($uri, $controller) {
+    public function post($uri, $controller): void {
         $this->add($uri, $controller, 'POST');
     }
 
-    public function delete($uri, $controller) {
+    public function delete($uri, $controller): void {
         $this->add($uri, $controller, 'DELETE');
     }
 }
