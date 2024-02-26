@@ -24,10 +24,10 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav ms-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <a class="nav-link<?= $_GET['url'] === 'sign-in' ? ' active' : ''?>" href="/sign-in">Вход</a>
+                            <a class="nav-link<?= isset($_GET['sign-in']) ? ' active' : ''; ?>" href="/sign-in">Вход</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link<?= $_GET['url'] === 'sign-up' ? ' active' : ''?>" href="/sign-up">Регистрация</a>
+                            <a class="nav-link<?= isset($_GET['sign-up']) ? ' active' : ''; ?>" href="/sign-up">Регистрация</a>
                         </li>
                     </ul>
                 </div>

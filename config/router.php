@@ -1,11 +1,13 @@
 <?php
     use Core\Classes\Router;
+    use \App\Controllers\PostController;
+    use \App\Controllers\AuthController;
 
     $router = new Router();
 
-    $router->register('', 'PostController', 'index');
-    $router->register('posts', 'PostController', 'detail');
-    $router->register('sign-in', 'AuthController', 'signIn');
-    $router->register('sign-up', 'AuthController', 'signUp');
+    $router->get("", [PostController::class, "index"]);
+    $router->get("posts", [PostController::class, "detail"]);
+    $router->get("sign-in", [AuthController::class, "signIn"]);
+    $router->get("sign-up", [AuthController::class, "signUp"]);
 
     return $router;

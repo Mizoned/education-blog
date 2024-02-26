@@ -8,7 +8,7 @@ class Router {
     protected string $method;
 
     public function __construct() {
-        $this->uri = trim(parse_url($_POST["_method"] ?? $_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+        $this->uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
         $this->method = $_POST['_method'] ?? $_SERVER["REQUEST_METHOD"];
     }
 
@@ -21,35 +21,41 @@ class Router {
         $this->route();
     }
 
-    // Обработка запроса
     public function route() {
-        $this->uri = trim(parse_url($_POST["_method"] ?? $_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+        $matches = false;
 
-        if (isset($this->routes[$this->uri])) {
-            $route = $this->routes[$this->uri];
-            $controllerName = $route['controller'];
-            $actionName = $route['action'];
+        foreach ($this->routes as $route) {
+            if (($route["uri"] === $this->uri) && $route["method"] === strtoupper($this->method)) {
+                $matches = true;
 
-            $controllerFile = CONTROLLERS . "/$controllerName.php";
+                $controllerStr = $route['controller'][0];
+                $action = $route['controller'][1];
 
-            if (file_exists($controllerFile)) {
-                require_once $controllerFile;
-                // Добавляем пространство имен к имени класса
-                $fullControllerName = 'app\\controllers\\' . $controllerName;
-                if (class_exists($fullControllerName)) {
-                    $controller = new $fullControllerName();
-                    if (method_exists($controller, $actionName)) {
-                        $controller->$actionName();
+                $implodeControllerArray = explode("\\", $controllerStr);
+
+                $fileController = CONTROLLERS . DIRECTORY_SEPARATOR . $implodeControllerArray[count($implodeControllerArray) - 1] . ".php";
+
+                if (file_exists($fileController)) {
+                    if (class_exists($controllerStr)) {
+                        $controller = new $controllerStr();
+
+                        if (method_exists($controller, $action)) {
+                            $controller->$action();
+                        } else {
+                            $matches = false;
+                            echo "Method not found!";
+                        }
                     } else {
-                        echo "Action not found!";
+                        $matches = false;
+                        echo "Controller class not found in file!";
                     }
-                } else {
-                    echo "Controller class not found in file!";
                 }
-            } else {
-                echo "Controller file not found!";
+
+                break;
             }
-        } else {
+        }
+
+        if (!$matches) {
             http_response_code(404);
             require_once TEMPLATES . "/errors/404.php";
         }

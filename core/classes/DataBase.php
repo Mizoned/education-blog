@@ -3,7 +3,6 @@
 namespace Core\Classes;
 
 class DataBase {
-
     private array $config;
     private \mysqli $connect;
     private \mysqli_result $stmt;
