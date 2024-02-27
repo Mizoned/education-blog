@@ -6,6 +6,7 @@ class Router {
     protected array $routes = [];
     protected string $uri;
     protected string $method;
+    protected array $middlewares;
 
     public function __construct() {
         $this->uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
@@ -27,11 +28,13 @@ class Router {
         foreach ($this->routes as $route) {
             if (($route["uri"] === $this->uri) && $route["method"] === strtoupper($this->method)) {
 
-//                if ($route['middleware'] === 'guest') {
-//                    if ($_SESSION["user"]) {
-//                        header("Location: ");
-//                    }
-//                }
+                if ($route['middleware']) {
+                    $middleware = $this->middlewares[$route['middleware']] ?? false;
+
+                    if ($middleware) {
+                        (new $middleware)->handle();
+                    }
+                }
 
                 $matches = true;
 
@@ -105,5 +108,9 @@ class Router {
         }
         header("Location: {$redirect}");
         die;
+    }
+
+    public function setMiddlewareList(array $middlewares) {
+        $this->middlewares = $middlewares;
     }
 }
