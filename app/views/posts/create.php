@@ -7,6 +7,7 @@
 
     $post = $_ROOT["post"] ?? NULL;
     $error = $_ROOT["error"] ?? NULL;
+    $success = $_ROOT["success"] ?? NULL;
     $validation = $_ROOT["validation"] ?? NULL;
 
     require_once TEMPLATES . "/header.php";
@@ -14,9 +15,20 @@
 
 <div class="container mt-5">
     <div class="row h-100">
-        <?php if ($error) { ?>
+        <?php if ($error || $success) { ?>
             <div class="col-lg-12">
-                <div class=" alert alert-danger" role="alert"><?= $error; ?></div>
+                <?php if ($error) {?>
+                    <div class=" alert alert-danger alert-dismissible fade show" role="alert">
+                        <?= $error; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php } ?>
+                <?php if ($success) {?>
+                    <div class=" alert alert-success alert-dismissible fade show" role="alert">
+                        <?= $success; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php } ?>
             </div>
         <?php } ?>
 

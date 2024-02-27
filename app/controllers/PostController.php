@@ -64,18 +64,20 @@ class PostController extends Controller {
             $result = $this->service->create($newPost["title"], $newPost["description"], $newPost["img"]);
 
             if ($result) {
-                Router::redirect("/");
+                $controllerData = ["success" => "Новый пост успешно создан!"];
             } else {
-                $this->view("posts.create", [
+                $controllerData = [
                     "post" => $newPost,
-                    "error" => 'Произошла непредвиденная ошибка'
-                ]);
+                    "error" => 'Произошла непредвиденная ошибка!'
+                ];
             }
         } else {
-            $this->view("posts.create", [
+            $controllerData = [
                 "post" => $newPost,
                 "validation" => $validator->getErrors()
-            ]);
+            ];
         }
+
+        $this->view("posts.create", $controllerData);
     }
 }
