@@ -9,7 +9,12 @@ class Router {
 
     public function __construct() {
         $this->uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
-        $this->method = $_POST['_method'] ?? $_SERVER["REQUEST_METHOD"];
+        $this->method = $this->getMethod();
+    }
+
+    public function getMethod(): string {
+        $method = isset($_POST["_method"]) && !empty($_POST["_method"]) ? $_POST["_method"] : $_SERVER["REQUEST_METHOD"];
+        return strtoupper($method);
     }
 
     public function init(): void {
@@ -21,6 +26,13 @@ class Router {
 
         foreach ($this->routes as $route) {
             if (($route["uri"] === $this->uri) && $route["method"] === strtoupper($this->method)) {
+
+//                if ($route['middleware'] === 'guest') {
+//                    if ($_SESSION["user"]) {
+//                        header("Location: ");
+//                    }
+//                }
+
                 $matches = true;
 
                 $controllerStr = $route['controller'][0];
@@ -56,23 +68,42 @@ class Router {
         }
     }
 
-    public function add($uri, $controller, $method): void {
+    public function only($middleware) {
+        $lastKey = array_key_last($this->routes);
+        $this->routes[$lastKey]['middleware'] = $middleware;
+        return $this;
+    }
+
+    public function add($uri, $controller, $method) {
         $this->routes[] = [
             'uri' => $uri,
             'controller' => $controller,
-            'method' => $method
+            'method' => $method,
+            'middleware' => null
         ];
+
+        return $this;
     }
 
-    public function get($uri, $controller): void {
-        $this->add($uri, $controller, 'GET');
+    public function get($uri, $controller) {
+        return $this->add($uri, $controller, 'GET');
     }
 
-    public function post($uri, $controller): void {
-        $this->add($uri, $controller, 'POST');
+    public function post($uri, $controller) {
+        return $this->add($uri, $controller, 'POST');
     }
 
-    public function delete($uri, $controller): void {
-        $this->add($uri, $controller, 'DELETE');
+    public function delete($uri, $controller) {
+        return $this->add($uri, $controller, 'DELETE');
+    }
+
+    public static function redirect($url) {
+        if ($url) {
+            $redirect = $url;
+        } else {
+            $redirect = $_SERVER['HTTP_REFERER'] ?? BASE_PATH;
+        }
+        header("Location: {$redirect}");
+        die;
     }
 }

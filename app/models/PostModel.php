@@ -17,4 +17,12 @@ class PostModel extends Model {
     public function getOne(int $id): array {
         return $this->database->query("SELECT * FROM posts WHERE id = $id LIMIT 1;")->find();
     }
+
+    public function create(array $post) {
+        $title = $post['title'];
+        $description = $post['description'];
+        $img = $post["img"];
+
+        return $this->database->query("INSERT INTO posts (title, description, img) VALUES ('$title', '$description', '$img');");
+    }
 }

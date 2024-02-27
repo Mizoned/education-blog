@@ -18,4 +18,14 @@ class PostService {
     public function getAll(): array {
         return $this->model->findAll();
     }
+
+    public function create($title, $description, $img = "") {
+        $newPost = [
+            "title" => $title,
+            "description" => $description,
+            "img" => $img
+        ];
+
+        return $this->model->create($newPost);
+    }
 }

@@ -3,14 +3,18 @@
 namespace Core\Classes;
 
 class App {
-    public array $instances = [];
+    protected static array $instances = [];
 
-    public function use(string $name, $class): void {
-        $this->instances[$name] = $class;
+    public static function use(string $name, $class): void {
+        static::$instances[$name] = $class;
     }
 
-    public function init(): void {
-        foreach ($this->instances as $instance) {
+    public static function get($service) {
+        return static::$instances[$service];
+    }
+
+    public static function init(): void {
+        foreach (static::$instances as $instance) {
             if (method_exists($instance, "init")) {
                 $instance->init();
             }

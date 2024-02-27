@@ -1,4 +1,4 @@
-<?
+<?php
     $title = "Регистрация";
     $head = "
         <link href='assets/css/sign-in.css' rel='stylesheet'>
@@ -6,7 +6,6 @@
 
     require_once TEMPLATES . "/header.php";
 ?>
-    <link href="assets/css/sign-in.css" rel="stylesheet">
     <div class="form-signin py-5 d-flex align-content-center justify-content-center h-100">
         <form class="d-flex flex-column align-self-center">
             <img class="mb-4 align-self-center" src="assets/images/bootstrap-logo.svg" alt="" width="72" height="57">
@@ -22,4 +21,4 @@
             <button type="submit" class="w-100 btn btn-primary">Зарегистрироваться</button>
         </form>
     </div>
-<? require_once TEMPLATES . "/footer.php"; ?>
+<?php require_once TEMPLATES . "/footer.php"; ?>

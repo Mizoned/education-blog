@@ -5,7 +5,7 @@ namespace Core\Classes;
 class DataBase {
     private array $config;
     private \mysqli $connect;
-    private \mysqli_result $stmt;
+    private bool | \mysqli_result $stmt;
 
     public function __construct(array $DBConfig) {
         $this->config = $DBConfig;
@@ -19,8 +19,13 @@ class DataBase {
         }
     }
 
-    public function query($query): DataBase {
-        $this->stmt = $this->connect->query($query);
+    public function query($query): false | DataBase {
+        try {
+            $this->stmt = $this->connect->query($query);
+        } catch (\Exception $e) {
+            return false;
+        }
+
         return $this;
     }
 

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @var $_ROOT
  */
@@ -17,23 +17,23 @@
 
 <div class="py-5 bg-light">
     <div class="container">
-        <?
+        <?php
         use App\Components\PostCard;
 
         $posts = $_ROOT['posts'];
         ?>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <? foreach ($posts as $post) { ?>
+            <?php foreach ($posts as $post) { ?>
                 <div class="col">
-                    <?
+                    <?php
                         $postCard = new PostCard($post);
                         $postCard->render();
                     ?>
                 </div>
-            <? } ?>
+            <?php } ?>
         </div>
     </div>
 </div>
 
-<? require_once TEMPLATES . "/footer.php"; ?>
+<?php require_once TEMPLATES . "/footer.php"; ?>

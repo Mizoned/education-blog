@@ -1,5 +1,6 @@
 <?php
 use Core\Classes\DataBase;
+use Core\Classes\Router;
 use Core\Classes\App;
 
 require_once dirname(__DIR__) . "/config/config.php";
@@ -11,9 +12,7 @@ $db_config = require CONFIG . "/database.php";
 $database = new DataBase($db_config);
 $router = require CONFIG . "/router.php";
 
-$app = new App();
+App::use(DataBase::class, $database);
+App::use(Router::class, $router);
 
-$app->use("DB", $database);
-$app->use("ROUTER", $router);
-
-$app->init();
+App::init();

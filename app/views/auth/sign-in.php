@@ -1,4 +1,4 @@
-<?
+<?php
     $title = "Авторизация";
     $head = "
         <link href='assets/css/sign-in.css' rel='stylesheet'>
@@ -22,4 +22,5 @@
         <button type="submit" class="w-100 btn btn-primary">Войти</button>
     </form>
 </div>
-<? require_once TEMPLATES . "/footer.php"; ?>
+
+<?php require_once TEMPLATES . "/footer.php"; ?>

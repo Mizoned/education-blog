@@ -3,10 +3,8 @@
 namespace Core\Classes;
 
 abstract class Model {
-    protected $database;
+    protected Database $database;
     public function __construct() {
-        global $database;
-
-        $this->database = $database;
+        $this->database = App::get(DataBase::class);
     }
 }
