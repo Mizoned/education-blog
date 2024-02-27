@@ -68,6 +68,11 @@ class Validator {
         $this->errors[$fieldName][$length] = $message;
     }
 
+    public function addError(string $fieldName, string $message): void {
+        $length = count($this->errors[$fieldName] ?? []);
+        $this->errors[$fieldName][$length] = $message;
+    }
+
     public function getErrors(): array {
         return $this->errors;
     }

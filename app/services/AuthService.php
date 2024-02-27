@@ -11,11 +11,11 @@ class AuthService {
         $this->model = new UserModel();
     }
 
-    public function getOneById(int $id): int {
+    public function getOneById(int $id): array {
         return $this->model->getOneById($id);
     }
 
-    public function getAll(): array {
-        return $this->model->getAll();
+    public function findOneByEmail(string $email): array {
+        return $this->model->findOneByEmail($email);
     }
 }

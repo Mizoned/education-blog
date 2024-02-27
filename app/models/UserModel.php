@@ -2,19 +2,15 @@
 
 namespace App\Models;
 
-class UserModel {
-    private $mysqli;
+use Core\Classes\Model;
 
-    public function __construct() {
-        global $mysqli;
-        $this->mysqli = $mysqli;
+class UserModel extends Model {
+
+    public function getOneById(int $id): array {
+        return $this->database->query("SELECT * FROM users WHERE id = '$id' LIMIT 1;")->find();
     }
 
-    public function getAll(): array {
-        return ['User 1', 'User 2', 'User 3'];
-    }
-
-    public function getOneById(int $id) {
-        return 1;
+    public function findOneByEmail(string $email): array {
+        return $this->database->query("SELECT * FROM users WHERE email = '$email' LIMIT 1;")->find();
     }
 }

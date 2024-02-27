@@ -17,8 +17,8 @@
     $router->get("posts/create", [PostController::class, "create"])->only('auth');
     $router->post("posts", [PostController::class, "store"])->only('auth');
 
-    $router->get("sign-in", [AuthController::class, "signIn"])->only('guest');
-    $router->get("sign-up", [AuthController::class, "signUp"])->only('guest');
+    $router->add("sign-in", [AuthController::class, "signIn"], ['GET', 'POST'])->only('guest');
+    $router->add("sign-up", [AuthController::class, "signUp"], ['GET', 'POST'])->only('guest');
     $router->get("logout", [AuthController::class, "logout"])->only('auth');
 
     return $router;
