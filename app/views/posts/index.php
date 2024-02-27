@@ -4,15 +4,16 @@
  */
     require_once TEMPLATES . "/header.php";
 ?>
-<section class="py-5 text-center bg-white">
+<section class="banner py-5 text-center bg-white">
     <div class="container">
         <div class="row py-lg-5">
             <div class="col-lg-6 col-md-8 mx-auto">
-                <h1 class="fw-light">Баннер</h1>
-                <p class="lead text-muted">Огромный текст баннера</p>
+                <h1 class="fw-bold">Мой блог</h1>
+                <p class="fw-light fs-4 text-muted">Огромный текст баннера</p>
             </div>
         </div>
     </div>
+    <img class="banner__img" src="assets/images/main-banner.jpg" alt="Мой блог">
 </section>
 
 <div class="py-5 bg-light">
