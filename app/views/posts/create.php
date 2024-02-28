@@ -14,7 +14,7 @@
 <div class="container mt-5 mb-5">
     <div class="row h-100">
         <div class="col-lg-8">
-            <h1 class="fw-bolder mb-3">Новый пост</h1>
+            <h1 class="fw-bolder mb-3"><?= $title; ?></h1>
             <form action="/posts" method="POST">
                 <div class="mb-3">
                     <label for="title" class="form-label">Заголовок</label>

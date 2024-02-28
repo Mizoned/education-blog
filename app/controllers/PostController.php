@@ -110,11 +110,15 @@ class PostController extends Controller {
     }
 
     public function updateIndex(): void {
-        $post = $this->service->getOne(intval($_GET["id"]));
+        if (isset($_GET["id"])) {
+            $post = $this->service->getOne(intval($_GET["id"]));
 
-        $this->view("posts.update", [
-            "post" => $post
-        ]);
+            $this->view("posts.update", [
+                "post" => $post
+            ]);
+        } else {
+            Router::redirect("/admin");
+        }
     }
 
     public function update() {
