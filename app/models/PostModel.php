@@ -27,7 +27,7 @@ class PostModel extends Model {
     }
 
     public function delete(int $postID) {
-        return $this->database->query("DELETE FROM posts WHERE id = '$postID'");
+        return $this->database->query("DELETE FROM posts WHERE id = '$postID';");
     }
 
     public function update(array $post) {

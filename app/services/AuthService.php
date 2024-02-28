@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\UserModel;
+use Core\Classes\Helper;
 
 class AuthService {
     private UserModel $model;
@@ -17,5 +18,15 @@ class AuthService {
 
     public function findOneByEmail(string $email): array {
         return $this->model->findOneByEmail($email);
+    }
+
+    public function create($name, $email, $password) {
+        $newUser = [
+            "name" => $name,
+            "email" => $email,
+            "password" => password_hash($password, PASSWORD_DEFAULT),
+        ];
+
+        return $this->model->create($newUser);
     }
 }

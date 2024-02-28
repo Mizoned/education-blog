@@ -2,8 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Components\AlertMessage;
 use App\Services\AuthService;
 use Core\Classes\Controller;
+use Core\Classes\Helper;
 use Core\Classes\Router;
 use Core\Classes\Validator;
 
@@ -44,7 +46,7 @@ class AuthController extends Controller {
 
             $validator = new Validator($userData, $rules, $messages);
 
-            if ($candidate) {
+            if (!empty($candidate)) {
                 $validator->validate();
 
                 if (!$validator->hasErrors()) {
@@ -74,6 +76,72 @@ class AuthController extends Controller {
     }
 
     public function signUp() {
-        $this->view('auth.sign-up');
+        $controllerData = [];
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $candidate = $this->service->findOneByEmail($_POST["email"]);
+
+            $userData = [
+                "name" => $_POST["name"],
+                "email" => $_POST["email"],
+                "password" => $_POST["password"]
+            ];
+
+            $rules = [
+                "name" => ["required", "min:2", "max:30"],
+                "email" => ["required", "email"],
+                "password" => ["required", "min:8", "max:12"]
+            ];
+
+            $messages = [
+                "name" => [
+                    'required' => "Поле не должно быть пустым",
+                    "min" => "Имя пользователя должено быть больше :min символов",
+                    "max" => "Имя пользователя должено быть меньше :max символов"
+                ],
+                "email" => [
+                    'required' => "Поле не должно быть пустым",
+                    'email' => "Поле не является электронным адресом"
+                ],
+                "password" => [
+                    'required' => "Поле не должно быть пустым",
+                    "min" => "Пароль должен быть больше :min символов",
+                    "max" => "Пароль должен быть меньше :max символов"
+                ],
+            ];
+
+            $validator = new Validator($userData, $rules, $messages);
+
+            if (empty($candidate)) {
+                $validator->validate();
+
+                if (!$validator->hasErrors()) {
+                    $result = $this->service->create($userData["name"], $userData["email"], $userData["password"]);
+
+                    if ($result !== false) {
+                        AlertMessage::setMessage("Новый пользователь успешно создан!", "success");
+
+                        Router::redirect("/users");
+                    } else {
+                        AlertMessage::setMessage("Произошла непредвиденная ошибка!", "error");
+                    }
+                }
+            } else {
+                $validator->addError("email", "Пользователь с таким email уже зарегистрирован");
+            }
+
+            $controllerData = [
+                "user" => $userData,
+                "validation" => $validator->getErrors()
+            ];
+        }
+
+        $this->view('auth.sign-up', $controllerData);
+    }
+
+    public function logout() {
+        unset($_SESSION["user"]);
+
+        Router::redirect("/");
     }
 }

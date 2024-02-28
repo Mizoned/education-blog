@@ -31,7 +31,7 @@ class PostCard {
             </svg>
         " :
         "
-            <img src='uploads/$this->img' alt='$this->title'/>
+            <img src='uploads/$this->img' width='100%' height='225' alt='$this->title'/>
         ";
 
         echo "

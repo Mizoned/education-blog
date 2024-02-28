@@ -36,7 +36,7 @@ class PostController extends Controller {
         $this->view("posts.create", []);
     }
 
-    public function store(): void {
+    public function create(): void {
         $controllerData = [];
 
         $newPost = [
