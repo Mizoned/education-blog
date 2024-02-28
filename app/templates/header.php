@@ -16,7 +16,7 @@
             <div class="container">
                 <a href="/" class="navbar-brand d-flex align-items-center gap-2">
                     <img src="assets/images/bootstrap-logo-white.svg" alt="" height="32">
-                    <strong>Блог</strong>
+                    <strong>Мой блог</strong>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -25,14 +25,10 @@
                     <ul class="navbar-nav ms-auto mb-2 mb-md-0">
                         <?php if (\Core\Classes\Helper::checkAuth()) { ?>
                             <li class="nav-item">
-                                <a class="nav-link<?= isset($_GET['admin']) ? ' active' : ''; ?>" href="/admin"><?= $_SESSION["user"]["name"] ?? $_SESSION["user"]["email"]; ?></a>
-                            </li>
-                        <?php } else { ?>
-                            <li class="nav-item">
-                                <a class="nav-link<?= isset($_GET['sign-in']) ? ' active' : ''; ?>" href="/sign-in">Вход</a>
+                                <a class="nav-link<?= isset($_GET['sign-up']) ? ' active' : ''; ?>" href="/sign-up">Зарегистрировать пользователя</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link<?= isset($_GET['sign-up']) ? ' active' : ''; ?>" href="/sign-up">Регистрация</a>
+                                <a class="nav-link<?= isset($_GET['admin']) ? ' active' : ''; ?>" href="/admin">Админка</a>
                             </li>
                         <?php } ?>
                     </ul>
@@ -41,3 +37,13 @@
         </nav>
     </header>
     <main class="bg-light">
+        <?php if (isset($_SESSION["_message"])) { ?>
+            <div class="container mt-5 mb-5">
+                <?php
+                    $message = $_SESSION["_message"]["message"] ?? "";
+                    $messageType = $_SESSION["_message"]["type"] ?? "";
+
+                    \App\Components\AlertMessage::render($message, $messageType);
+                ?>
+            </div>
+        <?php } ?>

@@ -1,3 +1,6 @@
+<?php
+    \App\Components\AlertMessage::destroyMessage();
+?>
         </main>
         <footer class="text-muted py-5">
             <div class="container">

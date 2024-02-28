@@ -106,6 +106,10 @@ class Router {
         return $this->add($uri, $controller, 'DELETE');
     }
 
+    public function update($uri, $controller) {
+        return $this->add($uri, $controller, 'UPDATE');
+    }
+
     public static function redirect($url) {
         if ($url) {
             $redirect = $url;

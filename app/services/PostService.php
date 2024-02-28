@@ -28,4 +28,33 @@ class PostService {
 
         return $this->model->create($newPost);
     }
+
+    public function update($id, $title, $description, $img = "") {
+        $post = $this->model->getPostById($id);
+
+        if ($post) {
+            $newPost = [
+                "id" => $id,
+                "title" => $title,
+                "description" => $description,
+                "img" => $img
+            ];
+
+            return $this->model->update($newPost);
+        }
+
+        return false;
+    }
+
+    public function delete(int $postID): bool {
+        $post = $this->model->getPostById($postID);
+
+        $isDeleted = false;
+
+        if ($post) {
+            $isDeleted = (bool)$this->model->delete($postID);
+        }
+
+        return $isDeleted;
+    }
 }

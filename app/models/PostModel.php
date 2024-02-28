@@ -25,4 +25,17 @@ class PostModel extends Model {
 
         return $this->database->query("INSERT INTO posts (title, description, img) VALUES ('$title', '$description', '$img');");
     }
+
+    public function delete(int $postID) {
+        return $this->database->query("DELETE FROM posts WHERE id = '$postID'");
+    }
+
+    public function update(array $post) {
+        $id = $post['id'];
+        $title = $post['title'];
+        $description = $post['description'];
+        $img = $post["img"];
+
+        return $this->database->query("UPDATE posts SET title = '$title', description = '$description', img = '$img' WHERE id = '$id';");
+    }
 }
