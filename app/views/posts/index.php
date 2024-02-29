@@ -28,7 +28,7 @@
             <?php foreach ($posts as $post) { ?>
                 <div class="col">
                     <?php
-                        $postCard = new PostCard($post);
+                        $postCard = new PostCard($post, \Core\Classes\Helper::checkAuth());
                         $postCard->render();
                     ?>
                 </div>

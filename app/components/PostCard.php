@@ -1,6 +1,8 @@
 <?php
 namespace App\Components;
 
+use Core\Classes\File;
+
 class PostCard {
     private string $id;
     private string $title;
@@ -22,8 +24,8 @@ class PostCard {
     }
 
     public function render(): void {
-        $editButton = $this->isEditable ? "<button type='button' class='btn btn-sm btn-outline-secondary'>Редактировать</button>" : "";
-        $img = empty($this->img) ? "
+        $editButton = $this->isEditable ? "<a href='posts/update?id=$this->id' class='btn btn-sm btn-outline-secondary'>Редактировать</a>" : "";
+        $img = (empty($this->img) || !File::exist(UPLOADS . "/" . $this->img)) ? "
             <svg width='100%' height='225' xmlns='http://www.w3.org/2000/svg' role='img' aria-label='Placeholder: No image' preserveAspectRatio='xMidYMid slice' focusable='false'>
                 <title>Placeholder</title>
                 <rect width='100%' height='100%' fill='#55595c'/>
@@ -31,15 +33,15 @@ class PostCard {
             </svg>
         " :
         "
-            <img src='uploads/$this->img' width='100%' height='225' alt='$this->title'/>
+            <img src='uploads/$this->img' width='100%' height='225' class='post-card__img' alt='$this->title'/>
         ";
 
         echo "
-            <div class='card shadow-sm'>
+            <div class='post-card card shadow-sm'>
                 $img
                 <div class='card-body'>
                     <p class='card-text'>$this->title</p>
-                    <div class='d-flex justify-content-between align-items-center'>
+                    <div class='d-flex justify-content-between align-items-center flex-wrap gap-2'>
                         <div class='btn-group'>
                             <a href='posts/?id=$this->id' class='btn btn-sm btn-outline-secondary'>Открыть</a>
                             $editButton
