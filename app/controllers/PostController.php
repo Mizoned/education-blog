@@ -5,9 +5,9 @@ namespace App\Controllers;
 use App\Components\AlertMessage;
 use App\Services\PostService;
 use Core\Classes\Controller;
-use Core\Classes\Helper;
 use Core\Classes\Router;
 use Core\Classes\Validator;
+use Core\Classes\File;
 
 class PostController extends Controller {
     private PostService $service;
@@ -37,17 +37,42 @@ class PostController extends Controller {
     }
 
     public function create(): void {
-        $controllerData = [];
+        $newPost = $this->prepareCreatePostData();
 
+        [$rules, $messages] = $this->getRulesAndMessagesForValidatePost();
+
+        $validator = new Validator($newPost, $rules, $messages);
+        $validator->validate();
+
+        $controllerData = $this->processCreatePostData($newPost, $validator);
+
+        if (empty($controllerData["validation"])) {
+            Router::redirect("/admin");
+        } else {
+            $this->view("posts.create", $controllerData);
+        }
+    }
+
+    private function prepareCreatePostData(): array {
         $newPost = [
-           "title" => $_POST["title"],
-           "description" => $_POST["description"],
-            "img" => $_POST["img"] ?? ""
+            "title" => $_POST["title"],
+            "description" => $_POST["description"],
         ];
 
+        if (!empty($_FILES["img"]["name"])) {
+            $newPost["img"] = $_FILES["img"];
+        } else {
+            $newPost["img"] = "";
+        }
+
+        return $newPost;
+    }
+
+    private function getRulesAndMessagesForValidatePost(): array {
         $rules = [
             "title" => ["required", "min:3", "max:100"],
-            "description" => ["required"]
+            "description" => ["required"],
+            "img" => ["ext:jpeg|jpg|png"],
         ];
 
         $messages = [
@@ -59,34 +84,36 @@ class PostController extends Controller {
             "description" => [
                 'required' => "Поле не должно быть пустым"
             ],
+            "img" => [
+                "ext" => "Изображение должно соответствовать форматам: :ext"
+            ]
         ];
 
-        $validator = new Validator($newPost, $rules, $messages);
-        $validator->validate();
+        return [$rules, $messages];
+    }
 
+    private function processCreatePostData($postData, $validator): array {
         if (!$validator->hasErrors()) {
-            $result = $this->service->create($newPost["title"], $newPost["description"], $newPost["img"]);
+            $uploadedFileName = is_array($postData["img"]) ? File::upload($postData["img"]) : "";
 
-            if ($result !== false) {
-                AlertMessage::setMessage("Новый пост успешно создан!", "success");
+            if ($uploadedFileName !== false) {
+                $result = $this->service->create($postData["title"], $postData["description"], $uploadedFileName);
+
+                if ($result !== false) {
+                    AlertMessage::setMessage("Новый пост успешно создан!", "success");
+                } else {
+                    AlertMessage::setMessage("Произошла непредвиденная ошибка!", "error");
+                    return ["post" => $postData];
+                }
             } else {
-                AlertMessage::setMessage("Произошла непредвиденная ошибка!", "error");
-                $controllerData = [
-                    "post" => $newPost
-                ];
+                $validator->addError("img", "Не удалось загрузить картинку");
             }
-        } else {
-            $controllerData = [
-                "post" => $newPost,
-                "validation" => $validator->getErrors()
-            ];
         }
 
-        if (empty($controllerData)) {
-            Router::redirect("/admin");
-        } else {
-            $this->view("posts.create", $controllerData);
-        }
+        return [
+            "post" => $postData,
+            "validation" => $validator->getErrors()
+        ];
     }
 
     public function destroy(): void {
@@ -122,56 +149,73 @@ class PostController extends Controller {
     }
 
     public function update() {
-        $controllerData = [];
+        $post = $this->prepareUpdatePostData();
 
-        $newPost = [
-            "id" => $_POST["id"],
-            "title" => $_POST["title"],
-            "description" => $_POST["description"],
-            "img" => $_POST["img"] ?? ""
-        ];
+        [$rules, $messages] = $this->getRulesAndMessagesForValidatePost();
 
-        $rules = [
-            "title" => ["required", "min:3", "max:100"],
-            "description" => ["required"]
-        ];
-
-        $messages = [
-            "title" => [
-                'required' => "Поле не должно быть пустым",
-                "min" => "Поле должно быть больше :min символов",
-                "max" => "Поле должно быть меньше :max символов"
-            ],
-            "description" => [
-                'required' => "Поле не должно быть пустым"
-            ],
-        ];
-
-        $validator = new Validator($newPost, $rules, $messages);
+        $validator = new Validator($post, $rules, $messages);
         $validator->validate();
 
-        if (!$validator->hasErrors()) {
-            $result = $this->service->update($newPost["id"], $newPost["title"], $newPost["description"], $newPost["img"]);
+        $controllerData = $this->processUpdatePostData($post, $validator);
 
-            if ($result !== false) {
-                AlertMessage::setMessage("Пост успешно изменен!", "success");
-            } else {
-                AlertMessage::setMessage("Произошла непредвиденная ошибка!", "error");
-                $controllerData = [
-                    "post" => $newPost
-                ];
-            }
-        } else {
-            $controllerData = [
-                "post" => $newPost,
-                "validation" => $validator->getErrors()
-            ];
-        }
-
-        if (empty($controllerData)) {
+        if (empty($controllerData["validation"])) {
             Router::redirect("/admin");
         } else {
             $this->view("posts.update", $controllerData);
         }
+    }
+
+    private function prepareUpdatePostData(): array {
+        $newPost = [
+            "id" => $_POST["id"],
+            "title" => $_POST["title"],
+            "description" => $_POST["description"]
+        ];
+
+        if (!empty($_FILES["img"]["name"])) {
+            $newPost["img"] = $_FILES["img"];
+        } elseif (!empty($_POST["oldImg"])) {
+            $newPost["img"] = $_POST["oldImg"];
+        } else {
+            $newPost["img"] = "";
+        }
+
+        return $newPost;
+    }
+
+    private function processUpdatePostData($postData, $validator): array {
+        if (!$validator->hasErrors()) {
+            if (is_array($postData["img"])) {
+                $oldFilePath = UPLOADS . "/" . $_POST["oldImg"];
+
+                if (File::exist($oldFilePath) && File::delete($oldFilePath)) {
+                    $uploadedFileName = File::upload($postData["img"]);
+                } else {
+                    $uploadedFileName = false;
+                }
+            } else {
+                $uploadedFileName = $postData["img"];
+            }
+
+            if ($uploadedFileName !== false) {
+                $result = $this->service->update($postData["id"], $postData["title"], $postData["description"], $uploadedFileName);
+
+                if ($result !== false) {
+                    AlertMessage::setMessage("Пост успешно изменен!", "success");
+                } else {
+                    File::delete(UPLOADS . "/" . $uploadedFileName);
+
+                    AlertMessage::setMessage("Произошла непредвиденная ошибка!", "error");
+                    return ["post" => $postData ];
+                }
+            } else {
+                $validator->addError("img", "Не удалось загрузить картинку");
+            }
+        }
+
+        return [
+            "post" => $postData,
+            "validation" => $validator->getErrors()
+        ];
     }
 }

@@ -28,6 +28,12 @@ class Validator {
                     case 'min':
                         $this->min($name, intval($explode[1]));
                         break;
+                    case 'ext':
+                        $this->ext($name, $explode[1]);
+                        break;
+                    case 'email':
+                        $this->email($name);
+                        break;
                 }
             }
         }
@@ -51,13 +57,26 @@ class Validator {
         }
     }
 
-    protected function email(string $fieldName, string $value): void {
-        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $this->setError($fieldName, 'email', $value);
+    protected function email(string $fieldName): void {
+        if (!filter_var($this->fields[$fieldName], FILTER_VALIDATE_EMAIL)) {
+            $this->setError($fieldName, 'email', $this->fields[$fieldName]);
         }
     }
 
-    private function setError(string $fieldName, string $rule, int $value = NULL): void {
+    protected function ext(string $fieldName, string $rules): void {
+        $file = $this->fields[$fieldName];
+
+        if (!empty($file["name"])) {
+            $fileExt = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $allowedExts = explode('|', $rules);
+
+            if (!in_array($fileExt, $allowedExts)) {
+                $this->setError($fieldName, 'ext', implode(", ", $allowedExts));
+            }
+        }
+    }
+
+    private function setError(string $fieldName, string $rule, mixed $value = NULL): void {
         $message = $this->messages[$fieldName][$rule];
         $length = count($this->errors[$fieldName] ?? []);
 

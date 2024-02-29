@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Components\AlertMessage;
 use App\Services\AuthService;
 use Core\Classes\Controller;
-use Core\Classes\Helper;
 use Core\Classes\Router;
 use Core\Classes\Validator;
 

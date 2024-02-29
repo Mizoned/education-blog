@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Core\Classes\Helper;
 use Core\Classes\Model;
 
 class UserModel extends Model {

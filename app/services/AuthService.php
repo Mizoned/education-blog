@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\UserModel;
-use Core\Classes\Helper;
 
 class AuthService {
     private UserModel $model;

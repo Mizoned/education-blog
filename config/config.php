@@ -2,7 +2,8 @@
     define("BASE_PATH", "http://blog");
     define("ROOT", dirname(__DIR__));
     define("CONFIG", ROOT . "/config");
-    define("PUBLIC", ROOT . "/public");
+    define("DIR_PUBLIC", ROOT . "/public");
+    define("UPLOADS", DIR_PUBLIC . "/uploads");
     define("APP", ROOT . "/app");
     define("CORE", ROOT . "/core");
 
