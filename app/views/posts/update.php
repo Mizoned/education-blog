@@ -18,7 +18,7 @@
                 <h1 class="fw-bolder mb-3"><?= $title; ?></h1>
                 <form action="/posts" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="_method" value="UPDATE">
-                    <input type="hidden" name="oldImg" value="<?= $post["img"]; ?>">
+                    <input type="hidden" name="oldImg" value="<?= is_array($post["img"]) ? "" : $post["img"]; ?>">
                     <input type="hidden" name="id" value="<?= $post["id"]; ?>">
                     <div class="mb-3">
                         <label for="title" class="form-label">Заголовок</label>

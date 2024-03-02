@@ -29,7 +29,7 @@ class File {
     }
 
     static public function exist(string $path): bool {
-        if (file_exists($path)) {
+        if (file_exists($path) && is_file($path)) {
             return true;
         } else {
             return false;

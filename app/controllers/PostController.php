@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Components\AlertMessage;
 use App\Services\PostService;
 use Core\Classes\Controller;
+use Core\Classes\Helper;
 use Core\Classes\Router;
 use Core\Classes\Validator;
 use Core\Classes\File;
@@ -188,16 +189,22 @@ class PostController extends Controller {
             if (is_array($postData["img"])) {
                 $oldFilePath = UPLOADS . "/" . $_POST["oldImg"];
 
-                if (File::exist($oldFilePath) && File::delete($oldFilePath)) {
-                    $uploadedFileName = File::upload($postData["img"]);
+                if (File::exist($oldFilePath)) {
+                    if (!File::delete($oldFilePath)) {
+                        $validator->addError("img", "Не удалось загрузить картинку");
+                        $uploadedFileName = false;
+                    } else {
+                        $uploadedFileName = File::upload($postData["img"]);
+                    }
                 } else {
-                    $uploadedFileName = false;
+                    $uploadedFileName = File::upload($postData["img"]);
                 }
             } else {
                 $uploadedFileName = $postData["img"];
             }
 
             if ($uploadedFileName !== false) {
+
                 $result = $this->service->update($postData["id"], $postData["title"], $postData["description"], $uploadedFileName);
 
                 if ($result !== false) {
